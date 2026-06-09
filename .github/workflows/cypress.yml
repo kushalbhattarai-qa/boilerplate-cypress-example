@@ -1,0 +1,83 @@
+name: Cypress QA Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run full regression nightly at 02:00 UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        default: "staging"
+        type: choice
+        options: [local, staging, production]
+      spec:
+        description: "Test spec pattern (leave empty for all)"
+        required: false
+        default: ""
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Run tests in parallel across N containers
+        containers: [1, 2, 3]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          headed: false
+          spec: ${{ github.event.inputs.spec || 'cypress/e2e/**/*.cy.js' }}
+        env:
+          CYPRESS_BASE_URL: ${{ secrets.STAGING_BASE_URL }}
+          CYPRESS_API_URL: ${{ secrets.STAGING_API_URL }}
+          CYPRESS_ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          CYPRESS_ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          CYPRESS_TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          CYPRESS_TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          CYPRESS_ENV: ${{ github.event.inputs.environment || 'staging' }}
+
+      - name: Upload screenshots on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots-${{ matrix.containers }}
+          path: cypress/reports/screenshots
+          retention-days: 7
+
+      - name: Upload videos
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-videos-${{ matrix.containers }}
+          path: cypress/reports/videos
+          retention-days: 7
+
+      - name: Upload Mochawesome report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-report-${{ matrix.containers }}
+          path: cypress/reports/html
+          retention-days: 14

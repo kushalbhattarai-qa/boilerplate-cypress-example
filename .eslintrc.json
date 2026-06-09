@@ -1,0 +1,15 @@
+{
+  "extends": ["plugin:cypress/recommended"],
+  "plugins": ["cypress"],
+  "env": {
+    "cypress/globals": true,
+    "es2021": true
+  },
+  "rules": {
+    "no-unused-vars": "warn",
+    "cypress/no-unnecessary-waiting": "warn",
+    "cypress/assertion-before-screenshot": "warn",
+    "cypress/no-force": "warn",
+    "cypress/no-async-tests": "error"
+  }
+}

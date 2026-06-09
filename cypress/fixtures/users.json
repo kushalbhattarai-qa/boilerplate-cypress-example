@@ -1,0 +1,21 @@
+{
+  "users": [
+    {
+      "id": "usr_001",
+      "name": "Alice Admin",
+      "email": "alice@example.com",
+      "role": "admin",
+      "createdAt": "2024-01-15T10:00:00Z"
+    },
+    {
+      "id": "usr_002",
+      "name": "Bob Viewer",
+      "email": "bob@example.com",
+      "role": "viewer",
+      "createdAt": "2024-02-20T08:30:00Z"
+    }
+  ],
+  "total": 2,
+  "page": 1,
+  "limit": 10
+}
