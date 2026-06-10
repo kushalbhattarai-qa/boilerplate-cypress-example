@@ -70,6 +70,7 @@ npm run cy:run
 | `npm run cy:open` | Open Cypress Test Runner (interactive) |
 | `npm run cy:run` | Run all tests headlessly |
 | `npm run test:e2e` | Run all e2e specs |
+| `npm run test:bdd` | Run Gherkin/Cucumber feature specs |
 | `npm run test:api` | Run API-only tests |
 | `npm run test:smoke` | Run smoke tests (`*.smoke.cy.js`) |
 | `npm run test:regression` | Run regression tests (`*.regression.cy.js`) |
@@ -199,13 +200,24 @@ Artifacts (screenshots, videos, HTML report) are uploaded after each run.
 
 ---
 
-## Adding New Tests
+## Adding New BDD Tests
 
-1. Create a new spec in `cypress/e2e/<feature>/feature.cy.js`
-2. If needed, add a Page Object in `cypress/support/pages/`
-3. Add fixture data in `cypress/fixtures/`
-4. Follow the `describe > context > it` nesting pattern
-5. Use `data-cy` attributes in your application markup
+1. Create a new feature file in `cypress/e2e/<feature>/<feature>.feature`
+2. Add matching step definitions in `cypress/e2e/<feature>/step_definitions/*.steps.js`
+3. Reuse Page Objects from `cypress/support/pages/` for UI actions and assertions
+4. Add fixture data in `cypress/fixtures/` when test data should be shared
+5. Use business-readable Gherkin steps and stable `data-cy` selectors
+
+Example:
+
+```gherkin
+Feature: Authentication
+
+  Scenario: Admin signs in with valid credentials
+    Given the login page is open
+    When I sign in with valid admin credentials
+    Then I should be taken to the dashboard
+```
 
 ---
 
