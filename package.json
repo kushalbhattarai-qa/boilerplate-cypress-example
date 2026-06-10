@@ -7,6 +7,7 @@
     "cy:run": "cypress run",
     "cy:run:headed": "cypress run --headed",
     "test:e2e": "cypress run --spec 'cypress/e2e/**/*.cy.js'",
+    "test:bdd": "cypress run --spec 'cypress/e2e/**/*.feature'",
     "test:api": "cypress run --spec 'cypress/e2e/api/**/*.cy.js'",
     "test:smoke": "cypress run --spec 'cypress/e2e/**/*.smoke.cy.js'",
     "test:regression": "cypress run --spec 'cypress/e2e/**/*.regression.cy.js'",
@@ -17,15 +18,23 @@
     "lint": "eslint cypress/**/*.js"
   },
   "devDependencies": {
-    "cypress": "^13.0.0",
+    "@badeball/cypress-cucumber-preprocessor": "^21.0.3",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.4",
     "@faker-js/faker": "^8.0.0",
-    "cypress-mochawesome-reporter": "^3.0.0",
-    "mochawesome-merge": "^4.3.0",
-    "mochawesome-report-generator": "^6.2.0",
-    "cypress-real-events": "^1.9.0",
     "@testing-library/cypress": "^10.0.0",
+    "cypress": "^13.0.0",
+    "cypress-mochawesome-reporter": "^3.0.0",
+    "cypress-real-events": "^1.9.0",
     "eslint": "^8.0.0",
     "eslint-plugin-cypress": "^2.15.0",
-    "mocha-junit-reporter": "^2.2.0"
+    "mocha-junit-reporter": "^2.2.0",
+    "mochawesome-merge": "^4.3.0",
+    "mochawesome-report-generator": "^6.2.0"
+  },
+  "cypress-cucumber-preprocessor": {
+    "stepDefinitions": [
+      "cypress/e2e/**/step_definitions/**/*.{js,ts}",
+      "cypress/e2e/**/*.steps.{js,ts}"
+    ]
   }
 }

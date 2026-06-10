@@ -1,4 +1,11 @@
 const { defineConfig } = require("cypress");
+const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
+const {
+  addCucumberPreprocessorPlugin,
+} = require("@badeball/cypress-cucumber-preprocessor");
+const {
+  createEsbuildPlugin,
+} = require("@badeball/cypress-cucumber-preprocessor/esbuild");
 
 module.exports = defineConfig({
   // ─── Reporter ──────────────────────────────────────────────
@@ -32,11 +39,22 @@ module.exports = defineConfig({
   // ─── E2E Config ─────────────────────────────────────────────
   e2e: {
     baseUrl: process.env.BASE_URL || "https://your-app.com",
-    specPattern: "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
+    specPattern: [
+      "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
+      "cypress/e2e/**/*.feature",
+    ],
     supportFile: "cypress/support/e2e.js",
     experimentalStudio: true,
 
-    setupNodeEvents(on, config) {
+    async setupNodeEvents(on, config) {
+      await addCucumberPreprocessorPlugin(on, config);
+      on(
+        "file:preprocessor",
+        createBundler({
+          plugins: [createEsbuildPlugin(config)],
+        })
+      );
+
       // ── Reporter plugin ──────────────────────────────────────
       require("cypress-mochawesome-reporter/plugin")(on);
 
